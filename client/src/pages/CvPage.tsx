@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
 import { useAlumniDirectory, useMyProfile } from "../hooks/useCv";
 import { AlumniCard } from "../components/cv/AlumniCard";
 import { AlumniFiltersBar } from "../components/cv/AlumniFilters";
@@ -8,7 +7,6 @@ import type { AlumniFilters } from "../types/alumniProfile";
 
 export function CvPage() {
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
   const [filters, setFilters] = useState<AlumniFilters>({});
 
   const { data: myProfile, isLoading: isMyProfileLoading } = useMyProfile();
