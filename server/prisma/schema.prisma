@@ -1,0 +1,183 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+model User {
+  id         String    @id @default(uuid())
+  googleId   String    @unique
+  email      String    @unique
+  name       String
+  avatarUrl  String?
+  promo      String?
+  role       Role      @default(STUDENT)
+  isBlocked  Boolean   @default(false)
+  blockedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  galleryPosts          GalleryPost[]
+  talentPosts           TalentPost[]
+  alumniProfile         AlumniProfile?
+  likes                 Like[]
+  comments              Comment[]
+  talentLikes           TalentLike[]
+  talentComments        TalentComment[]
+  receivedNotifications Notification[] @relation("recipient")
+  sentNotifications     Notification[] @relation("actor")
+}
+
+model GalleryPost {
+  id            String   @id @default(uuid())
+  title         String
+  imageUrl      String
+  caption       String?
+  likesCount    Int      @default(0)
+  commentsCount Int      @default(0)
+  authorId      String
+  author        User     @relation(fields: [authorId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  likes         Like[]
+  comments      Comment[]
+  notifications Notification[]
+}
+
+model Like {
+  id        String      @id @default(uuid())
+  postId    String
+  post      GalleryPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  createdAt DateTime    @default(now())
+
+  @@unique([postId, userId])
+}
+
+model Comment {
+  id        String      @id @default(uuid())
+  postId    String
+  post      GalleryPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User        @relation(fields: [authorId], references: [id])
+  content   String
+  createdAt DateTime    @default(now())
+}
+
+enum TalentCategory {
+  DRAWING
+  STORY_TELLING
+  DESIGN
+  WRITING
+  MUSIC
+  PHOTOGRAPHY
+}
+
+model TalentPost {
+  id            String         @id @default(uuid())
+  title         String
+  content       String
+  category      TalentCategory
+  mediaUrl      String
+  likesCount    Int            @default(0)
+  commentsCount Int            @default(0)
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  likes         TalentLike[]
+  comments      TalentComment[]
+  notifications Notification[]
+}
+
+model TalentLike {
+  id        String     @id @default(uuid())
+  postId    String
+  post      TalentPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  createdAt DateTime   @default(now())
+
+  @@unique([postId, userId])
+}
+
+model TalentComment {
+  id        String     @id @default(uuid())
+  postId    String
+  post      TalentPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User       @relation(fields: [authorId], references: [id])
+  content   String
+  createdAt DateTime   @default(now())
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  ADMIN_BLOCK
+}
+
+model Notification {
+  id           String           @id @default(uuid())
+  recipientId  String
+  recipient    User             @relation("recipient", fields: [recipientId], references: [id])
+  actorId      String?
+  actor        User?            @relation("actor", fields: [actorId], references: [id])
+  type         NotificationType
+  message      String
+  postId       String?
+  post         GalleryPost?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  talentPostId String?
+  talentPost   TalentPost?      @relation(fields: [talentPostId], references: [id], onDelete: Cascade)
+  isRead       Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+}
+
+model AlumniProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  filiere         String
+  promoYear       Int
+  currentJobTitle String
+  currentCompany  String
+  industry        String
+  linkedinUrl     String
+  cvFileUrl       String
+  skills          String[] @default([])
+
+  openToMentoring         Boolean @default(false)
+  openToReferrals         Boolean @default(false)
+  openToInterviewPrep     Boolean @default(false)
+  openToGeneralQuestions  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  careerEntries CareerEntry[]
+
+  @@index([filiere])
+  @@index([promoYear])
+  @@index([industry])
+}
+
+model CareerEntry {
+  id        String        @id @default(uuid())
+  profileId String
+  profile   AlumniProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title     String
+  company   String
+  startDate DateTime
+  endDate   DateTime?
+  order     Int           @default(0)
+}
