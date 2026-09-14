@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useUiStore } from "../../store/uiStore";
 import { useGallery } from "../../hooks/useGallery";
@@ -21,17 +21,28 @@ export function GalleryPreview() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
       <div className="mb-6 flex items-baseline justify-between">
-        <h2 className="font-display text-2xl font-semibold text-blue-deep">EnimGallery</h2>
-        <a href="/gallery" className="text-sm font-medium text-blue-mid hover:underline">
+        <h2 className="font-display text-2xl font-semibold text-blue-deep">
+          EnimGallery
+        </h2>
+        <Link
+          to="/gallery"
+          className="text-sm font-medium text-blue-mid hover:underline"
+        >
           See all photos
-        </a>
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {isLoading && <p className="col-span-full text-sm text-ink/50">Loading photos…</p>}
+        {isLoading && (
+          <p className="col-span-full text-sm text-ink/50">Loading photos…</p>
+        )}
 
         {posts?.map((post) => (
-          <GalleryCard key={post.id} post={post} onClick={() => handleClick(post.id)} />
+          <GalleryCard
+            key={post.id}
+            post={post}
+            onClick={() => handleClick(post.id)}
+          />
         ))}
 
         {!isAuthenticated && !isLoading && posts && posts.length > 0 && (

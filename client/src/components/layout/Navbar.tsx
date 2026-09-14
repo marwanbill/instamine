@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useUiStore } from "../../store/uiStore";
 import { GoogleLoginButton } from "../auth/GoogleLoginButton";
@@ -28,10 +28,10 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <div className="flex items-center gap-8">
-          <a href="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="InstaMine Logo" className="w-16 h-16" />
             <span className="font-display text-lg font-semibold text-blue-deep">InstaMine</span>
-          </a>
+          </Link>
 
           <nav className="hidden items-center gap-6 sm:flex">
             {navItems.map((item) => (

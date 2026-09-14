@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, FileText, ShieldCheck, User as UserIcon } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { logoutRequest } from "../../api/auth.api";
 
 export function ProfileMenu() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
   const clear = useAuthStore((s) => s.clear);
@@ -14,6 +16,7 @@ export function ProfileMenu() {
     await logoutRequest();
     clear();
     setIsOpen(false);
+    navigate("/");
   }
 
   return (
@@ -38,16 +41,21 @@ export function ProfileMenu() {
             <p className="truncate text-xs text-ink/50">{user.email}</p>
           </div>
           <nav className="p-1">
-            <a href="/profile" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ink/5">
-              <UserIcon size={16} /> My profile
-            </a>
-            <a href="/cv" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ink/5">
+            <Link
+              to="/cv"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ink/5"
+            >
               <FileText size={16} /> My CV
-            </a>
+            </Link>
             {user.role === "ADMIN" && (
-              <a href="/admin/users" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ink/5">
+              <Link
+                to="/admin/users"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-ink/5"
+              >
                 <ShieldCheck size={16} /> Manage users
-              </a>
+              </Link>
             )}
             <button
               onClick={handleLogout}
