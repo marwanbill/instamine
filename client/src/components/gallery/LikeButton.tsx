@@ -1,4 +1,4 @@
-import { ThumbsUp } from "lucide-react";
+import { Loader2, ThumbsUp } from "lucide-react";
 import { useToggleGalleryLike } from "../../hooks/useGalleryPost";
 import { useAuthStore } from "../../store/authStore";
 import { useUiStore } from "../../store/uiStore";
@@ -21,6 +21,7 @@ export function LikeButton({ postId, isLiked, likesCount }: LikeButtonProps) {
       openAuthModal();
       return;
     }
+    if (isPending) return;
 
     const wasLiked = isLiked;
     mutate(undefined, {
@@ -34,13 +35,20 @@ export function LikeButton({ postId, isLiked, likesCount }: LikeButtonProps) {
     <button
       onClick={handleClick}
       disabled={isPending}
+      aria-busy={isPending}
       className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-        isLiked
-          ? "border-blue-deep bg-blue-deep/10 text-blue-deep"
-          : "border-line text-ink/70 hover:bg-ink/5"
+        isPending
+          ? "cursor-not-allowed border-line text-ink/40"
+          : isLiked
+            ? "border-blue-deep bg-blue-deep/10 text-blue-deep"
+            : "border-line text-ink/70 hover:bg-ink/5"
       }`}
     >
-      <ThumbsUp size={16} fill={isLiked ? "currentColor" : "none"} />
+      {isPending ? (
+        <Loader2 size={16} className="animate-spin" />
+      ) : (
+        <ThumbsUp size={16} fill={isLiked ? "currentColor" : "none"} />
+      )}
       {likesCount}
     </button>
   );
