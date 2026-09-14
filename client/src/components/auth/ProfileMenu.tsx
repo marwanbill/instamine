@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LogOut, FileText, ShieldCheck, User as UserIcon } from "lucide-react";
+import { LogOut, FileText, ShieldCheck } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { logoutRequest } from "../../api/auth.api";
 
