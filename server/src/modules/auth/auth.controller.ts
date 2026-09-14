@@ -23,12 +23,12 @@ export async function googleCallback(
 
     const profile = await exchangeCodeForProfile(code);
 
-    /* if (!isAllowedEmail(profile.email)) {
+    if (!isAllowedEmail(profile.email)) {
       throw new ApiError(
         403,
         "Try to log in with your professional email @enim.ac.ma",
       );
-    } */
+    }
 
     const user = await upsertUserFromGoogle(profile);
     const token = issueSessionToken(user.id);
