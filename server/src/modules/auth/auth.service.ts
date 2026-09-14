@@ -87,6 +87,6 @@ export function issueSessionToken(userId: string): string {
 export const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  sameSite: env.NODE_ENV === "production" ? ("none" as const) : ("lax" as const),
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
 };
